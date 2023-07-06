@@ -3,6 +3,6 @@ import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord
 export type Command = {
     data: SlashCommandBuilder;
     enabled?: boolean,
-    execute: (message: Message | ChatInputCommandInteraction) => void,
+    execute: (message: Message | ChatInputCommandInteraction, args?: string[]) => void,
     once?: boolean,
 };

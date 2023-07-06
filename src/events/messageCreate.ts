@@ -19,13 +19,14 @@ module.exports = {
             return message.reply(`Unknown Command\nTry ${PREFIX}help`);
         }
 
+        console.log(`Command: ${command}, Author: ${message.author.username}, ` +
+		    `Argc: ${args.length}, Argv: ${args}`);
+
         try {
             message.client.commands.get(command).execute(message);
         } catch (error) {
             console.error(error);
             message.reply('There was an error trying to execute this command!');
         }
-
-        console.log(`Command: ${command}, Author: ${message.author.username}`);
     },
 };
