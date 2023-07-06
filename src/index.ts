@@ -1,10 +1,16 @@
 require('dotenv').config();
 import fs from 'node:fs';
 import path from 'node:path';
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import {
+    Client,
+    Collection,
+    GatewayIntentBits,
+} from 'discord.js';
+import { Command } from './definitions.js'
+
 declare module 'discord.js' {
     interface Client {
-        commands: Collection<string, any>;
+        commands: Collection<string, Command>;
         cooldowns: Collection<string, any>;
     }
 }
@@ -14,7 +20,7 @@ const client: Client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.MessageContent,
+        GatewayIntentBits.MessageContent,
     ],
 });
 client.commands = new Collection();
