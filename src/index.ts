@@ -9,7 +9,14 @@ declare module 'discord.js' {
     }
 }
 
-const client: Client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client: Client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.MessageContent,
+    ],
+});
 client.commands = new Collection();
 client.cooldowns = new Collection();
 
