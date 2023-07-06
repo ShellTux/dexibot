@@ -14,6 +14,7 @@ To use this bot, follow these steps:
 DISCORD_TOKEN=bot_token
 APPLICATION_ID=application_id
 GUILD_ID=guild_id
+PREFIX="*"
 ```
 
 The `bot token` and the `application id` can be found at the [discord developer portal](https://discord.com/developers/applications/).
