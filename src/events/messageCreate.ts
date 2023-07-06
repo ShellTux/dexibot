@@ -26,6 +26,6 @@ module.exports = {
             message.reply('There was an error trying to execute this command!');
         }
 
-        console.log(message.content);
+        console.log(`Command: ${command}, Author: ${message.author.username}`);
     },
 };
