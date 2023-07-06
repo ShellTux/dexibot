@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { Message, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../definitions.js';
 
 const PREFIX = process.env.PREFIX;
@@ -8,7 +8,7 @@ export const data = new SlashCommandBuilder()
     .setName('help')
     .setDescription('Bot Help page');
 
-export async function execute(message: Message) {
+export async function execute(message: Message | ChatInputCommandInteraction) {
     // TODO: add help page for single command
     await message.reply(
         message.client.commands

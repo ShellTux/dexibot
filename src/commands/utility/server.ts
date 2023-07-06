@@ -1,13 +1,13 @@
-import {SlashCommandBuilder} from 'discord.js';
+import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
 
 module.exports = {
-	data: new SlashCommandBuilder()
-	.setName('server')
-	.setDescription('Provides information about the server.'),
-	async execute(interaction) {
-		await interaction.reply(
-			`This server is ${interaction.guild.name} `
-			+ `and has ${interaction.guild.memberCount} members.`
-		);
-	},
+    data: new SlashCommandBuilder()
+        .setName('server')
+        .setDescription('Provides information about the server.'),
+    execute: async (message: Message | ChatInputCommandInteraction) => {
+        await message.reply(
+            `This server is ${message.guild.name} ` +
+                `and has ${message.guild.memberCount} members.`,
+        );
+    },
 };

@@ -1,6 +1,6 @@
-import {Message, SlashCommandBuilder} from "discord.js";
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord.js";
 
 export type Command = {
     data: SlashCommandBuilder;
-    execute: (message: Message) => void;
+    execute: (message: Message | ChatInputCommandInteraction) => void;
 };
