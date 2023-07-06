@@ -1,12 +1,8 @@
 require('dotenv').config();
 import fs from 'node:fs';
 import path from 'node:path';
-import {
-    Client,
-    Collection,
-    GatewayIntentBits,
-} from 'discord.js';
-import { Command } from './definitions.js'
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Command } from './definitions.js';
 
 declare module 'discord.js' {
     interface Client {
@@ -36,7 +32,13 @@ for (const folder of commandFolders) {
         .filter((file) => file.endsWith('.js'));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
+        const command: Command = require(filePath);
+
+        if (command.enabled === false) {
+            console.log(`[WARNING] The command ${command.data.name} is disabled!`);
+            continue;
+        }
+
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
         } else {

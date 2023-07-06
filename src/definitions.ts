@@ -2,5 +2,7 @@ import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord
 
 export type Command = {
     data: SlashCommandBuilder;
-    execute: (message: Message | ChatInputCommandInteraction) => void;
+    enabled?: boolean,
+    execute: (message: Message | ChatInputCommandInteraction) => void,
+    once?: boolean,
 };

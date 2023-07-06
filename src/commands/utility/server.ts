@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
+import {Command} from '../../definitions';
 
-module.exports = {
+module.exports = <Command> {
     data: new SlashCommandBuilder()
         .setName('server')
         .setDescription('Provides information about the server.'),

@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
+import { Command } from '../../definitions.js';
 
-module.exports = {
+module.exports = <Command> {
     data: new SlashCommandBuilder()
         .setName('user')
         .setDescription('Provides information about the user.'),
