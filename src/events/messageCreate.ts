@@ -23,7 +23,7 @@ module.exports = {
 		    `Argc: ${args.length}, Argv: ${args}`);
 
         try {
-            message.client.commands.get(command).execute(message);
+            message.client.commands.get(command).execute(message, args);
         } catch (error) {
             console.error(error);
             message.reply('There was an error trying to execute this command!');
