@@ -1,4 +1,4 @@
-require('dotenv').config();
+import 'dotenv/config'
 import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../definitions.js';
 
