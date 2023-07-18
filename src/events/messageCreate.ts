@@ -1,4 +1,4 @@
-import 'dotenv/config';
+require('dotenv').config();
 import { Events, Message } from 'discord.js';
 
 const PREFIX: string = process.env.PREFIX;
