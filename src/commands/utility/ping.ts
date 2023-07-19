@@ -2,10 +2,10 @@ import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'disco
 import {Command} from '../../definitions.js';
 
 module.exports = <Command> {
-	data: new SlashCommandBuilder()
-	.setName('ping')
-	.setDescription('Replies with Pong!'),
-	execute: async (message: Message | ChatInputCommandInteraction) => {
-		await message.reply('Pong!');
-	}
-}
+      data: new SlashCommandBuilder()
+            .setName('ping')
+            .setDescription('Replies with Pong!'),
+      execute: async (message: Message | ChatInputCommandInteraction) => {
+            await message.reply('Pong!');
+      }
+};
