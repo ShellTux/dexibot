@@ -61,5 +61,7 @@ This project is licensed under the [MIT License](LICENSE). Feel free to modify a
 ## Acknowledgements
 
 - https://discordjs.guide
+- https://discordjs.guide/voice
+- https://discord.js.org/docs
 
 Thank you for using our Discord bot! We hope it enhances your Discord server experience.
