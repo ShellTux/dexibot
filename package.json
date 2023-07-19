@@ -1,21 +1,26 @@
 {
-	"name": "dexibot",
+	"name": "discord-bot",
 	"version": "1.0.0",
 	"description": "Discord Bot",
 	"main": "dist/index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc",
-		"start": "node dist/index.js",
 		"build-start": "npm run build && npm run start",
-		"watch": "tsc --watch",
+		"build": "tsc",
+		"clean-build": "npm run clean && npm run build",
+		"clean-build-start": "npm run clean && npm run build && npm run start",
+		"clean": "rm -rd ./dist/",
 		"deploy-commands": "node dist/deploy-commands.js",
-		"clean": "rm -rd ./dist/"
+		"start": "node .",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"watch": "tsc --watch"
 	},
-	"author": "",
+	"keywords": [],
+	"author": "Luís Góis",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^20.4.0",
+		"@types/node": "^20.4.2",
+		"@typescript-eslint/eslint-plugin": "^6.1.0",
+		"@typescript-eslint/parser": "^6.1.0",
 		"eslint": "^8.44.0",
 		"typescript": "^5.1.6"
 	},

@@ -8,7 +8,12 @@ The bot is built using [Discord.js](https://discord.js.org/), a powerful library
 To use this bot, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/ShellTux/dexibot.git`
-2. Install dependencies: `npm install`
+2. Install dependencies: `npm install` and `npm install --save-dev`
+```sh
+npm install
+npm install --save-dev
+npm install --save-dev @types/node
+```
 3. Create a `.env` file with the following content:
 ```env
 DISCORD_TOKEN=bot_token
