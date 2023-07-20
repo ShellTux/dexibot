@@ -18,6 +18,9 @@ module.exports = <Command> {
 
 		const connection = getVoiceConnection(voiceChannel.guildId);
 
+		if (!connection)
+			return message.reply('Not connected to a voice channel!');
+
 		connection.destroy();
 	},
 };

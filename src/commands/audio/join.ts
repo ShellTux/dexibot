@@ -12,7 +12,7 @@ import {
 	VoiceBasedChannel
 } from 'discord.js';
 
-module.exports = <Command> {
+export const join: Command = {
 	data: new SlashCommandBuilder().setName('join').setDescription('Join Voice Channel'),
 	execute: async (message: Message | ChatInputCommandInteraction) => {
 		let voiceChannel: VoiceBasedChannel;
@@ -37,3 +37,5 @@ module.exports = <Command> {
 		}
 	},
 };
+
+module.exports = join;

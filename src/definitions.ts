@@ -1,8 +1,8 @@
 import {
-      ChatInputCommandInteraction,
-      Message,
-      SlashCommandBuilder,
-      User,
+	ChatInputCommandInteraction,
+	Message,
+	SlashCommandBuilder,
+	User,
 } from 'discord.js';
 
 export type Command = {
@@ -13,4 +13,20 @@ export type Command = {
 		args?: (string | User)[],
 	) => void;
 	once?: boolean;
+};
+
+export type YoutubeThumbnail = {
+	url: string;
+	width: number;
+	height: number;
+};
+
+export type YoutubeInfo = {
+	id: string;
+	url: string;
+	title: string;
+	duration: number;
+	channel_url: string;
+	thumbnail?: YoutubeThumbnail;
+	view_count: number;
 };

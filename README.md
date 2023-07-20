@@ -14,7 +14,17 @@ npm install
 npm install --save-dev
 npm install --save-dev @types/node
 ```
-3. Create a `.env` file with the following content:
+3. Install youtube-dl: for searching videos on youtube
+
+You can install through your package manager, or make sure you have the executable in your PATH
+
+`Distro` | `Command`
+--- | ---
+`Ubuntu/Debian` | `sudo apt-get install youtube-dl`
+`Fedora` | `sudo dnf install youtube-dl`
+`Arch Linux` | `sudo pacman -Syu youtube-dl`
+
+4. Create a `.env` file with the following content:
 ```env
 DISCORD_TOKEN=bot_token
 APPLICATION_ID=application_id
