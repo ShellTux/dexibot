@@ -64,6 +64,24 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
 
 <!-- TODO: ## Contributing -->
 
+## Features
+
+- [x] Help page `help`
+- [ ] Pagination
+- [x] Show information about the guild `server`
+- Audio
+  - [x] Join Voice Channel `join`
+  - [x] Leave Voice Channel `leave`
+  - [x] Play song `play`
+    - [ ] Pause
+    - [ ] Resume
+    - [ ] Queue
+      - [ ] Show Queue
+      - [ ] Shuffle Queue
+    - [ ] Skip
+    - [ ] Now playing
+    - [ ] Play time
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE). Feel free to modify and distribute the code as per the terms of the license.
