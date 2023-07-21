@@ -69,6 +69,7 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
 - [x] Help page `help`
 - [ ] Pagination
 - [x] Show information about the guild `server`
+- [x] Show information about the user `user`
 - Audio
   - [x] Join Voice Channel `join`
   - [x] Leave Voice Channel `leave`
