@@ -68,6 +68,7 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
 
 - [x] Help page `help`
 - [x] Pagination
+- [x] Ping/Latency `ping`
 - [x] Show information about the guild `server`
 - [x] Show information about the user `user`
 - Audio
