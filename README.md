@@ -67,7 +67,7 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
 ## Features
 
 - [x] Help page `help`
-- [ ] Pagination
+- [x] Pagination
 - [x] Show information about the guild `server`
 - [x] Show information about the user `user`
 - Audio
