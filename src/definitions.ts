@@ -11,7 +11,7 @@ export type Command = {
 	execute: (
 		message: Message | ChatInputCommandInteraction,
 		args?: (string | User)[],
-	) => void;
+	) => unknown;
 	once?: boolean;
 };
 

@@ -8,6 +8,11 @@ import {
 	Message
 } from 'discord.js';
 
+export const isUrl = function(url: string): boolean {
+	const urlPattern = /^(https?|):\/\/[^\s/$.?#].[^\s]*$/i;
+	return urlPattern.test(this);
+};
+
 enum PageButtonID {
 	Home     = 'home',
 	Next     = 'next',

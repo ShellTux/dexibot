@@ -7,7 +7,7 @@ import {
 	VoiceBasedChannel
 } from 'discord.js';
 
-module.exports = <Command> {
+const leave: Command = {
 	data: new SlashCommandBuilder().setName('leave').setDescription('Leave Voice Channel'),
 	execute: async (message: Message | ChatInputCommandInteraction) => {
 		let voiceChannel: VoiceBasedChannel;
@@ -24,3 +24,6 @@ module.exports = <Command> {
 		connection.destroy();
 	},
 };
+
+export = leave;
+module.exports = leave;

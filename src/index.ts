@@ -2,7 +2,7 @@ import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
-import { generateDependencyReport } from '@discordjs/voice';
+import { AudioPlayer, generateDependencyReport } from '@discordjs/voice';
 console.log(generateDependencyReport());
 import { Command } from './definitions.js';
 
@@ -10,6 +10,10 @@ declare module 'discord.js' {
 	interface Client {
 		commands: Collection<string, Command>;
 		cooldowns: Collection<string, any>;
+	}
+
+	interface ClientVoiceManager {
+		audioPlayer: AudioPlayer;
 	}
 }
 

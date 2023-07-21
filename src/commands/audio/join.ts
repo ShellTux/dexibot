@@ -3,6 +3,7 @@ import {
 	VoiceConnection,
 	VoiceConnectionStatus,
 	entersState,
+	getVoiceConnection,
 	joinVoiceChannel
 } from '@discordjs/voice';
 import {
@@ -12,30 +13,44 @@ import {
 	VoiceBasedChannel
 } from 'discord.js';
 
-export const join: Command = {
+const join: Command = {
 	data: new SlashCommandBuilder().setName('join').setDescription('Join Voice Channel'),
-	execute: async (message: Message | ChatInputCommandInteraction) => {
-		let voiceChannel: VoiceBasedChannel;
+	execute: async (
+		message: Message | ChatInputCommandInteraction
+	): Promise<VoiceConnection> => {
+		const voiceChannel: VoiceBasedChannel = (message instanceof Message)
+			? message.member.voice.channel
+			: undefined;
 
-		if (message instanceof Message) {
-			voiceChannel = message.member.voice.channel;
+		if (!voiceChannel) {
+			message.reply('You need to join a voice channel first');
+			return;
 		}
 
-		const connection: VoiceConnection = joinVoiceChannel({
-			channelId: voiceChannel.id,
-			guildId: voiceChannel.guildId,
-			adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-			selfDeaf: true,
-		});
+		let connection: VoiceConnection = getVoiceConnection(message.guildId);
 
-		try {
-			await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
-			return connection;
-		} catch (error) {
-			connection.destroy();
-			throw error;
+		if (!connection) {
+			connection = joinVoiceChannel({
+				channelId: voiceChannel.id,
+				guildId: voiceChannel.guildId,
+				adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+				selfDeaf: true,
+			});
+
+			try {
+				await entersState(
+					connection,
+					VoiceConnectionStatus.Ready,
+					30_000);
+			} catch (error) {
+				connection.destroy();
+				throw error;
+			}
 		}
+
+		return connection;
 	},
 };
 
+export = join;
 module.exports = join;

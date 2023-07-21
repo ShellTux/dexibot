@@ -1,98 +1,71 @@
-import { Command, YoutubeInfo, YoutubeThumbnail } from '../../definitions.js';
+import { Command, YoutubeInfo, YoutubeThumbnail } from '../../definitions';
+import { isUrl } from '../../functions';
 import {
 	AudioPlayerStatus,
 	NoSubscriberBehavior,
 	StreamType,
 	VoiceConnection,
-	VoiceConnectionStatus,
 	createAudioPlayer,
 	createAudioResource,
-	entersState,
-	getVoiceConnection,
-	joinVoiceChannel
 } from '@discordjs/voice';
 import {
 	ChatInputCommandInteraction,
 	Message,
 	SlashCommandBuilder,
 	User,
-	VoiceBasedChannel
 } from 'discord.js';
 import ytdl from 'ytdl-core';
-import { exec, execSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
+import leave from './leave';
+import join from './join';
 
 console.log(`ytdl-core version: ${ytdl.version}`);
 
-const isUrl = function(url: string): boolean {
-	const urlPattern = /^(https?|):\/\/[^\s/$.?#].[^\s]*$/i;
-	return urlPattern.test(this);
-};
-
 const ytdlSearch = function(query: string, amount: number): YoutubeInfo[] {
-	const results: YoutubeInfo[] = [];
-	const youtube_dlFlags: string = '--flat-playlist --dump-single-json';
-	const command: string = `youtube-dl ${youtube_dlFlags} "ytsearch${amount}:${query}"`;
-	const biggestThumbnail = (previous: YoutubeThumbnail, current: YoutubeThumbnail, index: number, array: YoutubeThumbnail[]): YoutubeThumbnail => {
+	const biggestThumbnail = (
+		previous: YoutubeThumbnail,
+		current: YoutubeThumbnail,
+		index: number,
+		array: YoutubeThumbnail[]
+	): YoutubeThumbnail => {
 		if (previous.width * previous.height > current.width * current.height)
 			return current;
 		return previous;
 	};
 
+	const flags: string = '--flat-playlist --dump-single-json';
+	const command: string = `youtube-dl ${flags} "ytsearch${amount}:${query}"`;
 	const stdout = execSync(command);
-	const resultJson = JSON.parse(stdout.toString());
-	for (const entry of resultJson.entries) {
-		// const thumbnails: YoutubeThumbnail[] = entry.thumbnails;
-		const youtubeInfo: YoutubeInfo = {
+	return JSON
+		.parse(stdout.toString())
+		.entries
+		.map(entry => <YoutubeInfo>{
 			id: entry.id,
 			url: entry.url,
 			title: entry.title,
 			duration: entry.duration,
 			channel_url: entry.channel_url,
 			view_count: entry.view_count,
-		};
-		results.push(youtubeInfo);
-	}
-	return results;
+		});
 };
 
-module.exports = <Command>{
+const play: Command = {
 	data: new SlashCommandBuilder().setName('play').setDescription('Play Music'),
 	execute: async (
 		message: Message | ChatInputCommandInteraction,
 		args?: (string | User)[]
 	) => {
-		// TODO: Use join and leave function, instead of repeated code
-		const voiceChannel: VoiceBasedChannel = (message instanceof Message)
-			? message.member.voice.channel
-			: undefined;
+		const connection = <VoiceConnection> await join.execute(message);
 
-		if (!voiceChannel)
-			return message.reply('You need to join a voice channel first');
-
-		let connection: VoiceConnection = getVoiceConnection(message.guildId);
-
-		if (!connection) {
-			connection = joinVoiceChannel({
-				channelId: voiceChannel.id,
-				guildId: voiceChannel.guildId,
-				adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-				selfDeaf: true,
-			});
-
-			try {
-				await entersState(connection,
-						  VoiceConnectionStatus.Ready, 30_000);
-			} catch (error) {
-				connection.destroy();
-				throw error;
-			}
-		}
+		if (!connection) return;
 
 		const audioPlayer = createAudioPlayer({
 			behaviors: {
 				noSubscriber: NoSubscriberBehavior.Pause,
 			},
 		});
+
+		message.client.voice.audioPlayer = audioPlayer;
 		
 		// TODO: Give better feedback
 		if (args.some(arg => arg instanceof User))
@@ -124,6 +97,7 @@ module.exports = <Command>{
 
 		const audioStream = ytdl(url, ytdl_options);
 
+		audioPlayer.stop();
 		const audioResource = createAudioResource(audioStream, {
 			inputType: StreamType.Arbitrary,
 		});
@@ -134,9 +108,12 @@ module.exports = <Command>{
 
 		audioPlayer.on(AudioPlayerStatus.Idle, () => {
 			subscription.unsubscribe();
-			connection.destroy();
+			leave.execute(message);
 		});
 
 		return message;
 	},
 };
+
+export = play;
+module.exports = play;
