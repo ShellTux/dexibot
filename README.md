@@ -75,8 +75,8 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
   - [x] Join Voice Channel `join`
   - [x] Leave Voice Channel `leave`
   - [x] Play song `play`
-    - [ ] Pause
-    - [ ] Resume
+    - [x] Pause
+    - [x] Resume
     - [x] Queue
       - [x] Show Queue
       - [ ] Shuffle Queue
