@@ -93,7 +93,8 @@ const pageButtonLabel = function (id: PageButtonID): string {
 export const pagination = async function(
 	message: Message | ChatInputCommandInteraction,
 	pages: EmbedBuilder[],
-	pageIndex: number = 0
+	pageIndex: number = 0,
+	timeout: number = 5 * 60 * 1e3,
 ) {
 	if (pages.length === 0) {
 		console.error('Empty pages');
@@ -132,8 +133,7 @@ export const pagination = async function(
 
 	const collector = response.createMessageComponentCollector({
 		componentType: ComponentType.Button,
-		// TODO: Magic Number
-		time: 5 * 60 * 1e3,
+		time: timeout,
 		filter: interaction => {
 			interaction.deferUpdate();
 			return interaction.user.id === message.member.user.id;
