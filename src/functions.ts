@@ -178,8 +178,6 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 		client.audioPlayer.set(guildId, audioPlayer);
 
 		audioPlayer.on(AudioPlayerStatus.Playing, () => {
-			queueCommand.execute(message);
-			nowPlaying.execute(message);
 		});
 
 		audioPlayer.on(AudioPlayerStatus.Idle, () => {
@@ -200,6 +198,8 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 				});
 
 				audioPlayer.play(audioResource);
+				queueCommand.execute(message);
+				nowPlaying.execute(message);
 			}
 		});
 
