@@ -1,12 +1,25 @@
 import {
+	AudioPlayerStatus,
+	NoSubscriberBehavior,
+	StreamType,
+	createAudioPlayer,
+	createAudioResource
+} from '@discordjs/voice';
+import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
 	ChatInputCommandInteraction,
+	Client,
 	ComponentType,
 	EmbedBuilder,
 	Message
 } from 'discord.js';
+import * as queueCommand from './commands/audio/queue';
+import leave from './commands/audio/leave';
+import nowPlaying from './commands/audio/now-playing';
+import { YoutubeInfo } from './definitions';
+import ytdl from 'ytdl-core';
 
 export const isUrl = function(url: string): boolean {
 	const urlPattern = /^(https?|):\/\/[^\s/$.?#].[^\s]*$/i;
@@ -98,4 +111,50 @@ export const pagination = async function(
 
 		editResponse();
 	});
+};
+
+export const initializeClient = function(message: Message | ChatInputCommandInteraction) {
+	const client: Client = message.client;
+	const guildId: string = message.guildId;
+
+	if (!client.queue.has(guildId))
+		client.queue.set(guildId, []);
+
+	if (!client.audioPlayer.has(guildId)) {
+		const audioPlayer = createAudioPlayer({
+			behaviors: {
+				noSubscriber: NoSubscriberBehavior.Pause,
+			}
+		});
+
+		// TODO: Move AudioPlayer config to a file
+		client.audioPlayer.set(guildId, audioPlayer);
+
+		audioPlayer.on(AudioPlayerStatus.Playing, () => {
+			queueCommand.execute(message);
+			nowPlaying.execute(message);
+		});
+
+		audioPlayer.on(AudioPlayerStatus.Idle, () => {
+			const queue: YoutubeInfo[] = client.queue.get(guildId);
+			queue.shift();
+			if (queue.length === 0) {
+				leave.execute(message);
+			} else {
+				// TODO: move ytdl options to a config file
+				const ytdlOptions: ytdl.downloadOptions = {
+					filter: 'audioonly',
+				};
+
+				const track: YoutubeInfo = queue[0];
+				const audioStream = ytdl(track.url, ytdlOptions);
+				const audioResource = createAudioResource(audioStream, {
+					inputType: StreamType.Arbitrary,
+				});
+
+				audioPlayer.play(audioResource);
+			}
+		});
+
+	}
 };

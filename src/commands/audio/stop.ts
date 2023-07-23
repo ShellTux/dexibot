@@ -8,7 +8,9 @@ module.exports = <Command>{
 	execute: async (
 		message: Message | ChatInputCommandInteraction,
 	) => {
-		message.client.voice.audioPlayer.stop();
+		const audioPlayer = message.client.audioPlayer.get(message.guildId);
+
+		audioPlayer.stop();
 		return message;
 	},
 };

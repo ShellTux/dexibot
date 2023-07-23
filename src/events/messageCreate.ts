@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { Events, Message } from 'discord.js';
+import { initializeClient } from '../functions';
 
 const PREFIX: string = process.env.PREFIX;
 
@@ -23,6 +24,8 @@ module.exports = {
 			`Command: ${command}, Author: ${message.author.username}, ` +
 				`Argc: ${args.length}, Argv: ${args}`,
 		);
+
+		initializeClient(message);
 
 		try {
 			message.client.commands.get(command).execute(message, args);
