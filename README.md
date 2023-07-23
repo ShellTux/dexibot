@@ -77,11 +77,11 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
   - [x] Play song `play`
     - [ ] Pause
     - [ ] Resume
-    - [ ] Queue
-      - [ ] Show Queue
+    - [x] Queue
+      - [x] Show Queue
       - [ ] Shuffle Queue
     - [ ] Skip
-    - [ ] Now playing
+    - [x] Now playing
     - [ ] Play time
 
 ## License

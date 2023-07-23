@@ -1,37 +1,36 @@
-import { Command, YoutubeInfo, YoutubeThumbnail } from '../../definitions';
-import { isUrl } from '../../functions';
+import { Command, YoutubeBasicInfo, YoutubeInfo } from '../../definitions';
+import { getYoutubeInfo, isUrl } from '../../functions';
 import {
-	AudioPlayerStatus,
-	NoSubscriberBehavior,
+	AudioPlayer,
 	StreamType,
 	VoiceConnection,
-	createAudioPlayer,
 	createAudioResource,
 } from '@discordjs/voice';
 import {
 	ChatInputCommandInteraction,
+	Client,
 	Message,
 	SlashCommandBuilder,
 	User,
 } from 'discord.js';
 import ytdl from 'ytdl-core';
 import { execSync } from 'node:child_process';
-import leave from './leave';
 import join from './join';
 
 console.log(`ytdl-core version: ${ytdl.version}`);
 
-const ytdlSearch = function(query: string, amount: number): YoutubeInfo[] {
-	const biggestThumbnail = (
-		previous: YoutubeThumbnail,
-		current: YoutubeThumbnail,
-		index: number,
-		array: YoutubeThumbnail[]
-	): YoutubeThumbnail => {
-		if (previous.width * previous.height > current.width * current.height)
-			return current;
-		return previous;
-	};
+const ytdlSearch = function(query: string, amount: number): YoutubeBasicInfo[] {
+	// TODO: Pick biggest thumbnail
+	// const biggestThumbnail = (
+	// 	previous: YoutubeThumbnail,
+	// 	current: YoutubeThumbnail,
+	// 	index: number,
+	// 	array: YoutubeThumbnail[]
+	// ): YoutubeThumbnail => {
+	// 	if (previous.width * previous.height > current.width * current.height)
+	// 		return current;
+	// 	return previous;
+	// };
 
 	const flags: string = '--flat-playlist --dump-single-json';
 	const command: string = `youtube-dl ${flags} "ytsearch${amount}:${query}"`;
@@ -39,13 +38,21 @@ const ytdlSearch = function(query: string, amount: number): YoutubeInfo[] {
 	return JSON
 		.parse(stdout.toString())
 		.entries
-		.map(entry => <YoutubeInfo>{
-			id: entry.id,
-			url: entry.url,
-			title: entry.title,
-			duration: entry.duration,
-			channel_url: entry.channel_url,
-			view_count: entry.view_count,
+		.map((entry: {
+			id: string;
+			title: string;
+			duration: number;
+			view_count: number;
+		}) => {
+			const info: YoutubeBasicInfo = {
+				id: entry.id,
+				url: `https://www.youtube.com/watch?v=${entry.id}`,
+				title: entry.title,
+				duration: entry.duration,
+				viewCount: entry.view_count,
+			};
+
+			return info;
 		});
 };
 
@@ -59,14 +66,6 @@ const play: Command = {
 
 		if (!connection) return;
 
-		const audioPlayer = createAudioPlayer({
-			behaviors: {
-				noSubscriber: NoSubscriberBehavior.Pause,
-			},
-		});
-
-		message.client.voice.audioPlayer = audioPlayer;
-		
 		// TODO: Give better feedback
 		if (args.some(arg => arg instanceof User))
 			return message.reply('Invalid query');
@@ -75,41 +74,43 @@ const play: Command = {
 			return message.reply('No query provided');
 
 		const query: string = args.join(' ');
+		const client: Client = message.client;
+		const audioPlayer: AudioPlayer = client.audioPlayer.get(message.guildId);
+		const queue: YoutubeInfo[] = client.queue.get(message.guildId);
 
-		let url: string;
-		if (isUrl(query))
-			url = query;
-		else {
+		if (isUrl(query)) {
+			const result = await getYoutubeInfo(query);
+			result;
+			return;
+		} else {
 			// TODO: Magic number
-			const results: YoutubeInfo[] = ytdlSearch(query, 5);
+			const results: YoutubeBasicInfo[] = ytdlSearch(query, 5);
 
 			if (results.length === 0)
 				return message.reply('No results found!');
 
 			// TODO: Magic Number, do we always want the first result?
-			url = results[0].url;
+			const result: YoutubeInfo = await getYoutubeInfo(results[0].url);
+
+			queue.push(result);
 		}
 
 		// TODO: move ytdl options to a config file
-		const ytdl_options: ytdl.downloadOptions = {
+		const ytdlOptions: ytdl.downloadOptions = {
 			filter: 'audioonly',
 		};
 
-		const audioStream = ytdl(url, ytdl_options);
+		if (!audioPlayer.checkPlayable()) {
+			const track: YoutubeInfo = queue[0];
+			const audioStream = ytdl(track.url, ytdlOptions);
+			const audioResource = createAudioResource(audioStream, {
+				inputType: StreamType.Arbitrary,
+			});
 
-		audioPlayer.stop();
-		const audioResource = createAudioResource(audioStream, {
-			inputType: StreamType.Arbitrary,
-		});
+			audioPlayer.play(audioResource);
+		}
 
-		audioPlayer.play(audioResource);
-
-		const subscription = connection.subscribe(audioPlayer);
-
-		audioPlayer.on(AudioPlayerStatus.Idle, () => {
-			subscription.unsubscribe();
-			leave.execute(message);
-		});
+		connection.subscribe(audioPlayer);
 
 		return message;
 	},

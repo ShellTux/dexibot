@@ -21,12 +21,26 @@ export type YoutubeThumbnail = {
 	height: number;
 };
 
-export type YoutubeInfo = {
+export type YoutubeBasicInfo = {
 	id: string;
 	url: string;
 	title: string;
 	duration: number;
-	channel_url: string;
+	viewCount: number;
+}
+
+export type YoutubeInfo = YoutubeBasicInfo & {
+	channel: {
+		name: string;
+		url: string;
+		id: string;
+		userUrl?: string;
+		subscriberCount?: number;
+	};
 	thumbnail?: YoutubeThumbnail;
-	view_count: number;
+	uploadDate: string;
+	category?: string;
+	isLive: boolean;
+	likes: number;
+	dislikes: number;
 };

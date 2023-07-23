@@ -23,7 +23,54 @@ import ytdl from 'ytdl-core';
 
 export const isUrl = function(url: string): boolean {
 	const urlPattern = /^(https?|):\/\/[^\s/$.?#].[^\s]*$/i;
-	return urlPattern.test(this);
+	return urlPattern.test(url);
+};
+
+export const ytdlMoreVideoDetails2YoutubeInfo = function(
+	details: ytdl.MoreVideoDetails
+): YoutubeInfo {
+	const info: YoutubeInfo = {
+		id: details.videoId,
+		url: details.video_url,
+		title: details.title,
+		duration: parseInt(details.lengthSeconds),
+		channel: {
+			name: details.author.name,
+			url: details.author.channel_url,
+			id: details.author.id,
+			userUrl: details.author.user_url,
+			subscriberCount: details.author.subscriber_count,
+		},
+		viewCount: parseInt(details.viewCount),
+		uploadDate: details.uploadDate,
+		category: details.category,
+		isLive: details.isLiveContent,
+		likes: details.likes,
+		dislikes: details.dislikes,
+		thumbnail: details.thumbnails.reduce((
+			previous: ytdl.thumbnail,
+			current: ytdl.thumbnail,
+		) => {
+			if (current.width * current.height > previous.width * previous.height)
+				return current;
+			return previous;
+		}, { url: '', width: 0, height: 0 }),
+	};
+
+	return info;
+};
+
+export const getYoutubeInfo = async function(url: string): Promise<YoutubeInfo> {
+	if (!isUrl(url)) return;
+
+	const info = await ytdl.getBasicInfo(url)
+		.then((response: ytdl.videoInfo) => response.videoDetails)
+		.then(ytdlMoreVideoDetails2YoutubeInfo)
+		.catch(console.error);
+
+	if (!info) return;
+
+	return info;
 };
 
 enum PageButtonID {
