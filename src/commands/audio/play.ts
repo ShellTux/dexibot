@@ -80,8 +80,7 @@ const play: Command = {
 
 		if (isUrl(query)) {
 			const result = await getYoutubeInfo(query);
-			result;
-			return;
+			queue.push(result);
 		} else {
 			// TODO: Magic number
 			const results: YoutubeBasicInfo[] = ytdlSearch(query, 5);
