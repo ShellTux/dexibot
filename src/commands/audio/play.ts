@@ -79,6 +79,10 @@ const play: Command = {
 		const audioPlayer: AudioPlayer = client.audioPlayer.get(message.guildId);
 		const queue: YoutubeInfo[] = client.queue.get(message.guildId);
 
+		message.channel.send({
+			content: ':mag_right: Searching for Music :musical_note:',
+		});
+
 		if (isUrl(query)) {
 			const result = await getYoutubeInfo(query);
 			queue.push(result);

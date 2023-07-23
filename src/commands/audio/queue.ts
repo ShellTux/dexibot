@@ -1,5 +1,6 @@
 import {
 	ChatInputCommandInteraction,
+	EmbedBuilder,
 	Message,
 	SlashCommandBuilder,
 } from 'discord.js';
@@ -17,12 +18,27 @@ const queue: Command = {
 		if (queue.length === 0)
 			return message.reply('Queue is empty');
 
-		const content = queue
-			.map(function(track: YoutubeInfo): string {
-				return track.title;
-			})
-			.join('\n');
-		return message.reply(content);
+		const currentTrack: YoutubeInfo = queue[0];
+
+		const embed = new EmbedBuilder()
+			.setColor(0xFFFFFF)
+			.setTitle(':scroll: Queue List')
+			.setThumbnail(message.guild.iconURL())
+			.addFields({
+				name: 'Current Track',
+				value: `\`1)\` ${currentTrack.title}`,
+				inline: true,
+			}, {
+				name: 'Requested by',
+				value: 'WIP',
+				inline: true,
+			}, {
+				name: 'Duration',
+				value: `${currentTrack.duration}`,
+				inline: true,
+			});
+
+		return message.reply({ embeds: [embed] });
 	},
 };
 
