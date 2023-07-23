@@ -16,6 +16,7 @@ import {
 import ytdl from 'ytdl-core';
 import { execSync } from 'node:child_process';
 import join from './join';
+import * as queueCommand from './queue';
 
 console.log(`ytdl-core version: ${ytdl.version}`);
 
@@ -107,6 +108,8 @@ const play: Command = {
 			});
 
 			audioPlayer.play(audioResource);
+		} else {
+			queueCommand.execute(message);
 		}
 
 		connection.subscribe(audioPlayer);
