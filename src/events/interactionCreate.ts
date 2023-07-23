@@ -21,13 +21,15 @@ module.exports = {
 		const now = Date.now();
 		const timestamps = cooldowns.get(command.data.name);
 		const defaultCooldownDuration = 3;
-		const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1000;
+		// const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1000;
+		const cooldownAmount = defaultCooldownDuration * 1000;
 
 		if (timestamps.has(interaction.user.id)) {
-			const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+			const expirationTime = timestamps.get(interaction.user.id) +
+				cooldownAmount;
 
 			if (now < expirationTime) {
-				const expiredTimestamp = Math.round(expirationTime / 1000);
+				const expiredTimestamp = Math.round(expirationTime / 1e3);
 				return interaction.reply({
 					content:
                         'Please wait, you are on a cooldown for ' +
