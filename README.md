@@ -86,6 +86,7 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
 - Miscellaneous
   - [x] Flip coin `flip-coin`
   ![Flipping a coin](assets/flip-coin/coinflip.gif)
+  - [x] uwu `uwu`
 
 ## License
 

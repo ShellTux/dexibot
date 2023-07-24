@@ -294,7 +294,50 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 	* @param {string} sentence - The sentence to capitalize.
 	* @returns {string} The capitalized sentence
 */
-export const capitalizeWords = (sentence: string): string => sentence
-	.split(' ')
-	.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-	.join(' ');
+export const capitalizeWords = function(sentence: string): string {
+	return sentence
+		.split(' ')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+};
+
+export const uwuRules = {
+	faces: [
+		'＾ω＾',
+		'(≧◡≦)',
+		'(≧∇≦)/',
+		'ヾ(・ω・ｏ)',
+		':3',
+		'OwO',
+		'UwU',
+		'uwu',
+		'owo',
+		'qwq'
+	],
+	replacements: [
+		{ toReplace: /(?:r|l)/g, with: 'w' },
+		{ toReplace: /n([aeiou])/g, with: 'ny$1' },
+		{ toReplace: /ove/g, with: 'uv' },
+		{ toReplace: /ame/g, with: 'ayme' },
+	],
+};
+
+/**
+	* Converts a sentence into "uwu" style.
+	*
+	* @param {string} sentence - The sentence to be uwuified.
+	* @returns {string} The uwuified sentence
+*/
+export const uwuify = function(sentence: string): string {
+	sentence = sentence.toLowerCase();
+
+	uwuRules.replacements.forEach((letter) => {
+		sentence = sentence.replace(letter.toReplace, letter.with);
+	});
+
+	if (sentence[0].match(/[a-z]/i)) sentence = `${sentence[0]}-${sentence}`;
+	if (sentence[sentence.length - 1].match(/[a-z]/i)) sentence += '~~';
+	sentence += ` ${uwuRules.faces[Math.floor(Math.random() * uwuRules.faces.length)]}`;
+
+	return sentence;
+};
