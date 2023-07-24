@@ -9,6 +9,7 @@ import {
 } from 'discord.js';
 import { Command, YoutubeInfo } from '../../definitions';
 import { ButtonStyle } from 'discord.js';
+import { AudioPlayerStatus } from '@discordjs/voice';
 
 const nowPlaying: Command = {
 	data: new SlashCommandBuilder()
@@ -119,34 +120,45 @@ const nowPlaying: Command = {
 
 		const response = await message.reply({
 			embeds: [embed] ,
-			components: components
+			components: components,
+		});
+
+		const editResponse = () => response.edit({
+			embeds: [embed],
+			components: components,
 		});
 
 		const collector = response.createMessageComponentCollector({
 			componentType: ComponentType.Button,
-			// TODO: remove time
-			time: 2 * 60 * 1e3,
 			filter: interaction => {
 				interaction.deferUpdate();
 				return interaction.user.id === message.member.user.id;
 			},
 		});
 
-		collector.on('collect', async interaction => {
-			collector.resetTimer();
+		const audioPlayer = message.client.audioPlayer.get(message.guildId);
+
+		audioPlayer.once(AudioPlayerStatus.Idle, () => {
+			collector.stop('Music ended');
 		});
 
-		collector.on('end', () => {
+		collector.on('collect', async interaction => {
+			collector.resetTimer();
+
+			if (!message.client.commands.has(interaction.customId)) return;
+
+			const command = message.client.commands.get(interaction.customId);
+			command.execute(message);
+		});
+
+		collector.on('end', (collected, reason) => {
 			components.forEach(
 				component => component.components.forEach(
 					button => button.setDisabled(true)
 				)
 			);
 
-			response.edit({
-				embeds: [embed] ,
-				components: components
-			});
+			editResponse();
 		});
 
 		return response;
