@@ -1,10 +1,14 @@
 import {
+	ActionRowBuilder,
+	ButtonBuilder,
 	ChatInputCommandInteraction,
+	ComponentType,
 	EmbedBuilder,
 	Message,
 	SlashCommandBuilder,
 } from 'discord.js';
 import { Command, YoutubeInfo } from '../../definitions';
+import { ButtonStyle } from 'discord.js';
 
 const nowPlaying: Command = {
 	data: new SlashCommandBuilder()
@@ -87,7 +91,65 @@ const nowPlaying: Command = {
 			.setImage(track.thumbnail.url)
 			.setTimestamp();
 
-		return message.reply({ embeds: [embed] });
+		const components: ActionRowBuilder<ButtonBuilder>[] = [
+			new ActionRowBuilder<ButtonBuilder>()
+				.addComponents([
+					new ButtonBuilder()
+						.setCustomId('resume')
+						.setStyle(ButtonStyle.Success)
+						.setEmoji('▶️'),
+					new ButtonBuilder()
+						.setCustomId('pause')
+						.setStyle(ButtonStyle.Secondary)
+						.setEmoji('⏸'),
+					new ButtonBuilder()
+						.setCustomId('leave')
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji('⏹'),
+					new ButtonBuilder()
+						.setCustomId('skip')
+						.setStyle(ButtonStyle.Primary)
+						.setEmoji('⏭'),
+					new ButtonBuilder()
+						.setLabel('Video Link')
+						.setStyle(ButtonStyle.Link)
+						.setURL(track.url),
+				])
+		];
+
+		const response = await message.reply({
+			embeds: [embed] ,
+			components: components
+		});
+
+		const collector = response.createMessageComponentCollector({
+			componentType: ComponentType.Button,
+			// TODO: remove time
+			time: 2 * 60 * 1e3,
+			filter: interaction => {
+				interaction.deferUpdate();
+				return interaction.user.id === message.member.user.id;
+			},
+		});
+
+		collector.on('collect', async interaction => {
+			collector.resetTimer();
+		});
+
+		collector.on('end', () => {
+			components.forEach(
+				component => component.components.forEach(
+					button => button.setDisabled(true)
+				)
+			);
+
+			response.edit({
+				embeds: [embed] ,
+				components: components
+			});
+		});
+
+		return response;
 	},
 };
 
