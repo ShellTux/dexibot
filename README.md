@@ -79,8 +79,8 @@ Feel free to modify or extend the bot's commands to suit your needs. You can fin
     - [x] Resume
     - [x] Queue
       - [x] Show Queue
-      - [ ] Shuffle Queue
-    - [ ] Skip
+      - [ ] Shuffle
+    - [x] Skip
     - [x] Now playing
     - [ ] Play time
 
