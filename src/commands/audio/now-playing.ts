@@ -104,7 +104,7 @@ const nowPlaying: Command = {
 						.setStyle(ButtonStyle.Secondary)
 						.setEmoji('⏸'),
 					new ButtonBuilder()
-						.setCustomId('leave')
+						.setCustomId('stop')
 						.setStyle(ButtonStyle.Danger)
 						.setEmoji('⏹'),
 					new ButtonBuilder()
@@ -151,7 +151,7 @@ const nowPlaying: Command = {
 			command.execute(message);
 		});
 
-		collector.on('end', (collected, reason) => {
+		collector.on('end', () => {
 			components.forEach(
 				component => component.components.forEach(
 					button => button.setDisabled(true)

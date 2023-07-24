@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../definitions';
-import leave from './leave';
 
 module.exports = <Command>{
 	data: new SlashCommandBuilder()
@@ -9,6 +8,7 @@ module.exports = <Command>{
 	execute: async (
 		message: Message | ChatInputCommandInteraction,
 	) => {
-		leave.execute(message);
+		message.client.queue.set(message.guildId, []);
+		message.client.audioPlayer.get(message.guildId).stop();
 	},
 };
