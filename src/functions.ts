@@ -287,3 +287,14 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 
 	}
 };
+
+/**
+	* Capitalizes the first letter of each word in a sentence.
+	*
+	* @param {string} sentence - The sentence to capitalize.
+	* @returns {string} The capitalized sentence
+*/
+export const capitalizeWords = (sentence: string): string => sentence
+	.split(' ')
+	.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+	.join(' ');
