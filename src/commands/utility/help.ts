@@ -10,8 +10,10 @@ import { pagination } from '../../functions';
 
 const PREFIX = process.env.PREFIX;
 
-module.exports = <Command> {
-	data: new SlashCommandBuilder().setName('help').setDescription('Bot Help page'),
+const help: Command = {
+	data: new SlashCommandBuilder()
+		.setName('help')
+		.setDescription('Bot Help page'),
 	execute: async (message: Message | ChatInputCommandInteraction) => {
 		// TODO: add help page for single command
 		// TODO: Add menu selection, spread commands over categories
@@ -20,6 +22,12 @@ module.exports = <Command> {
 		const embedCommands: EmbedBuilder[] = Array
 			.from(message.client.commands.values())
 			.sort((commandA: Command, commandB: Command) => {
+				if (commandA.data.name === 'help')
+					return -1;
+
+				if (commandB.data.name === 'help')
+					return 1;
+
 				return commandA.data.name > commandB.data.name ? 1 : -1;
 			})
 			.map((command, i, array) => {
@@ -42,3 +50,6 @@ module.exports = <Command> {
 		pagination(message, embedCommands);
 	},
 };
+
+export = help;
+module.exports = help;
