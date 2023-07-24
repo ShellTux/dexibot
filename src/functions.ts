@@ -13,7 +13,9 @@ import {
 	Client,
 	ComponentType,
 	EmbedBuilder,
-	Message
+	Message,
+	StringSelectMenuBuilder,
+	StringSelectMenuOptionBuilder
 } from 'discord.js';
 import * as queueCommand from './commands/audio/queue';
 import leave from './commands/audio/leave';
@@ -102,7 +104,22 @@ export const pagination = async function(
 	}
 		
 	const defaultPageIndex: number = pageIndex;
-	const paginationButtonRow = new ActionRowBuilder<ButtonBuilder>()
+
+	const menuRow = new ActionRowBuilder<StringSelectMenuBuilder>()
+		.addComponents(
+			new StringSelectMenuBuilder()
+				.setCustomId('Page')
+				.setPlaceholder('Select Page')
+				.addOptions(pages.map((embed, index) => {
+					// TODO: Make options configurable
+					return new StringSelectMenuOptionBuilder()
+						.setLabel(`Page ${index + 1}`)
+						.setDescription(embed.data.description)
+						.setValue(index.toString());
+				}))
+		);
+
+	const buttonRow = new ActionRowBuilder<ButtonBuilder>()
 		.addComponents(
 			new ButtonBuilder()
 				.setCustomId(PageButtonID.Previous)
@@ -123,15 +140,15 @@ export const pagination = async function(
 
 	const response = await message.reply({
 		embeds: [pages[defaultPageIndex]],
-		components: [paginationButtonRow],
+		components: [menuRow, buttonRow],
 	});
 
 	const editResponse = async () => await response.edit({
 		embeds: [pages[pageIndex]],
-		components: [paginationButtonRow],
+		components: [menuRow, buttonRow],
 	});
 
-	const collector = response.createMessageComponentCollector({
+	const buttonCollector = response.createMessageComponentCollector({
 		componentType: ComponentType.Button,
 		time: timeout,
 		filter: interaction => {
@@ -140,8 +157,8 @@ export const pagination = async function(
 		},
 	});
 
-	collector.on('collect', async interaction => {
-		collector.resetTimer();
+	buttonCollector.on('collect', async interaction => {
+		buttonCollector.resetTimer();
 
 		if (interaction.customId === PageButtonID.Home)
 			pageIndex = defaultPageIndex;
@@ -153,8 +170,31 @@ export const pagination = async function(
 		editResponse();
 	});
 
-	collector.on('end', () => {
-		paginationButtonRow.components.forEach(button => button.setDisabled(true));
+	buttonCollector.on('end', () => {
+		buttonRow.components.forEach(button => button.setDisabled(true));
+
+		editResponse();
+	});
+
+	const menuCollector = response.createMessageComponentCollector({
+		componentType: ComponentType.StringSelect,
+		time: timeout,
+		filter: interaction => {
+			interaction.deferUpdate();
+			return interaction.user.id === message.member.user.id;
+		},
+	});
+
+	menuCollector.on('collect', async interaction => {
+		buttonCollector.resetTimer();
+
+		pageIndex = parseInt(interaction.values[0]);
+
+		editResponse();
+	});
+
+	menuCollector.on('end', () => {
+		menuRow.components.forEach(menu => menu.setDisabled(true));
 
 		editResponse();
 	});
