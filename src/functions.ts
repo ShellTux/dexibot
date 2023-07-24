@@ -23,11 +23,23 @@ import nowPlaying from './commands/audio/now-playing';
 import { YoutubeInfo } from './definitions';
 import ytdl from 'ytdl-core';
 
+/**
+	* Checks if a given string is a valid URL.
+	*
+	* @param {string} url - The string to be checked.
+	* @returns {boolean} Returns true if the string is a valid URL, otherwise false.
+	*/
 export const isUrl = function(url: string): boolean {
 	const urlPattern = /^(https?|):\/\/[^\s/$.?#].[^\s]*$/i;
 	return urlPattern.test(url);
 };
 
+/**
+	* Converts ytdl.MoreVideoDetails to YoutubeInfo object.
+	*
+	* @param {ytdl.MoreVideoDetails} details - The ytdl.MoreVideoDetails object containing video details.
+	* @returns {YoutubeInfo} The converted YoutubeInfo object.
+	*/
 export const ytdlMoreVideoDetails2YoutubeInfo = function(
 	details: ytdl.MoreVideoDetails
 ): YoutubeInfo {
@@ -62,6 +74,12 @@ export const ytdlMoreVideoDetails2YoutubeInfo = function(
 	return info;
 };
 
+/**
+	* Retrieves YouTube video information from a given URL.
+	*
+	* @param {string} url - The YouTube video URL.
+	* @returns {Promise<YoutubeInfo>} A promise that resolves to the YouTube video information.
+    */
 export const getYoutubeInfo = async function(url: string): Promise<YoutubeInfo> {
 	if (!isUrl(url)) return;
 
@@ -75,12 +93,22 @@ export const getYoutubeInfo = async function(url: string): Promise<YoutubeInfo> 
 	return info;
 };
 
+/**
+	* Enum representing page button IDs.
+	* @enum {string}
+*/
 enum PageButtonID {
 	Home     = 'home',
 	Next     = 'next',
 	Previous = 'previous',
 }
 
+/**
+	* Returns the label associated with a given page button ID.
+	*
+	* @param {PageButtonID} id - The page button ID.
+	* @returns {string} The label associated with the page button ID.
+	*/
 const pageButtonLabel = function (id: PageButtonID): string {
 	switch (id) {
 	case PageButtonID.Home:
@@ -92,6 +120,15 @@ const pageButtonLabel = function (id: PageButtonID): string {
 	}
 };
 
+/**
+	* Displays a paginated menu with buttons and a select menu for navigation.
+	*
+	* @param {Message | ChatInputCommandInteraction} message - The message or interaction to reply to.
+	* @param {EmbedBuilder[]} pages - An array of EmbedBuilders representing the pages to display.
+	* @param {number} [pageIndex=0] - The initial page index to display. Defaults to 0.
+	* @param {number} [timeout=300000] - The timeout in milliseconds for collecting user interactions. Defaults to 5 minutes (300,000 milliseconds).
+	* @returns {Promise<void>}
+*/
 export const pagination = async function(
 	message: Message | ChatInputCommandInteraction,
 	pages: EmbedBuilder[],
@@ -200,6 +237,11 @@ export const pagination = async function(
 	});
 };
 
+/**
+	* Initializes the client for audio playback.
+	*
+	* @param {Message | ChatInputCommandInteraction} message - The message or interaction triggering the initialization
+*/
 export const initializeClient = function(message: Message | ChatInputCommandInteraction) {
 	const client: Client = message.client;
 	const guildId: string = message.guildId;

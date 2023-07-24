@@ -15,12 +15,18 @@ export type Command = {
 	once?: boolean;
 };
 
+/**
+	* Represent a Youtube Thumbnail
+*/
 export type YoutubeThumbnail = {
 	url: string;
 	width: number;
 	height: number;
 };
 
+/**
+	* Represents basic information about a YouTube videos
+*/
 export type YoutubeBasicInfo = {
 	id: string;
 	url: string;
@@ -29,6 +35,9 @@ export type YoutubeBasicInfo = {
 	viewCount: number;
 }
 
+/**
+	* Represents detailed information about a YouTube video
+*/
 export type YoutubeInfo = YoutubeBasicInfo & {
 	channel: {
 		name: string;
