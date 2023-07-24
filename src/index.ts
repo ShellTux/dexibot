@@ -71,4 +71,7 @@ for (const file of eventFiles) {
 	}
 }
 
+if (!process.env.DISCORD_TOKEN)
+	throw new Error('DISCORD_TOKEN environment variable missing.');
+
 client.login(process.env.DISCORD_TOKEN);
