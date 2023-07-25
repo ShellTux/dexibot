@@ -38,7 +38,7 @@ const nowPlaying: Command = {
 				inline: true
 			}, {
 				name: 'Requested by',
-				value: 'WIP',
+				value: track.requestedBy.toString(),
 				inline: true
 			}, {
 				name: 'Duration',

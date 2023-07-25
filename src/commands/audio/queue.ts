@@ -38,7 +38,7 @@ const queue: Command = {
 					inline: true,
 				}, {
 					name: 'Requested by',
-					value: 'WIP',
+					value: currentTrack.requestedBy.toString(),
 					inline: true,
 				}, {
 					name: 'Duration',
