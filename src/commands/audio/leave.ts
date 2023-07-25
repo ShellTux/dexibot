@@ -1,4 +1,4 @@
-import { Command, YoutubeInfo } from '../../definitions';
+import { Command, QueueTrack } from '../../definitions';
 import { getVoiceConnection } from '@discordjs/voice';
 import {
 	ChatInputCommandInteraction,
@@ -21,7 +21,7 @@ const leave: Command = {
 		if (!connection)
 			return message.reply('Not connected to a voice channel!');
 
-		const queue: YoutubeInfo[] = message.client.queue.get(message.guildId);
+		const queue: QueueTrack[] = message.client.queue.get(message.guildId);
 		queue.splice(0, queue.length);
 
 		connection.destroy();

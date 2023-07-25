@@ -7,7 +7,7 @@ import {
 	Message,
 	SlashCommandBuilder,
 } from 'discord.js';
-import { Command, YoutubeInfo } from '../../definitions';
+import { Command, QueueTrack } from '../../definitions';
 import { ButtonStyle } from 'discord.js';
 import { AudioPlayerStatus } from '@discordjs/voice';
 
@@ -18,12 +18,12 @@ const nowPlaying: Command = {
 	execute: async (
 		message: Message | ChatInputCommandInteraction,
 	) => {
-		const queue: YoutubeInfo[] = message.client.queue.get(message.guildId);
+		const queue: QueueTrack[] = message.client.queue.get(message.guildId);
 
 		if (queue.length === 0)
 			return message.reply('Queue is empty');
 
-		const track: YoutubeInfo = queue[0];
+		const track = queue[0];
 		const nextTrack = (queue.length <= 1)
 			? queue[1]
 			: undefined;
@@ -34,7 +34,7 @@ const nowPlaying: Command = {
 			.setThumbnail(message.guild.iconURL())
 			.addFields({
 				name: 'Track',
-				value: track.title,
+				value: track.info.title,
 				inline: true
 			}, {
 				name: 'Requested by',
@@ -43,53 +43,53 @@ const nowPlaying: Command = {
 			}, {
 				name: 'Duration',
 				// TODO: convert duration in seconds to locale format
-				value: `\`${track.duration}\``,
+				value: `\`${track.info.duration}\``,
 				inline: true,
 			})
 			.addFields({
 				name: 'Channel',
-				value: track.channel.name,
+				value: track.info.channel.name,
 				inline: true,
 			}, {
 				name: 'Channel Subscriber Count',
 				value: `:ballot_box_with_check: ${track
-					.channel.subscriberCount}`,
+					.info.channel.subscriberCount}`,
 				inline: true,
 			}, {
 				name: 'Channel URL',
-				value: track.channel.url,
+				value: track.info.channel.url,
 				inline: true,
 			})
 			.addFields({
 				name: 'Link',
-				value: track.url,
+				value: track.info.url,
 			})
 			.addFields({
 				name: 'Likes',
-				value: `:thumbsup: ${track.likes}`,
+				value: `:thumbsup: ${track.info.likes}`,
 				inline: true,
 			}, {
 				name: 'Dislikes',
-				value: `:thumbsdown: ${track.dislikes}`,
+				value: `:thumbsdown: ${track.info.dislikes}`,
 				inline: true,
 			}, {
 				name: 'View Count',
-				value: `:face_with_monocle: ${track.viewCount}`,
+				value: `:face_with_monocle: ${track.info.viewCount}`,
 				inline: true,
 			})
 			.addFields({
 				name: 'Upload Date',
-				value: track.uploadDate,
+				value: track.info.uploadDate,
 			})
 			.addFields((nextTrack)
 				? {
 					name: ':track_next: Next',
-					value: nextTrack.title,
+					value: nextTrack.info.title,
 				} : {
 					name: ':track_next: Next',
 					value: ':no_entry_sign: Nothing next in the queue'
 				})
-			.setImage(track.thumbnail.url)
+			.setImage(track.info.thumbnail.url)
 			.setTimestamp();
 
 		const components: ActionRowBuilder<ButtonBuilder>[] = [
@@ -114,7 +114,7 @@ const nowPlaying: Command = {
 					new ButtonBuilder()
 						.setLabel('Video Link')
 						.setStyle(ButtonStyle.Link)
-						.setURL(track.url),
+						.setURL(track.info.url),
 				])
 		];
 

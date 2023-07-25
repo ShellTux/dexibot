@@ -1,4 +1,4 @@
-import { Command, YoutubeBasicInfo, YoutubeInfo } from '../../definitions';
+import { Command, QueueTrack, YoutubeBasicInfo, YoutubeInfo } from '../../definitions';
 import { getYoutubeInfo, isUrl } from '../../functions';
 import {
 	AudioPlayer,
@@ -78,14 +78,18 @@ const play: Command = {
 		const query: string = args.join(' ');
 		const client: Client = message.client;
 		const audioPlayer: AudioPlayer = client.audioPlayer.get(message.guildId);
-		const queue: YoutubeInfo[] = client.queue.get(message.guildId);
+		const queue: QueueTrack[] = client.queue.get(message.guildId);
 
 		message.channel.send({
 			content: ':mag_right: Searching for Music :musical_note:',
 		});
 
 		if (isUrl(query)) {
-			const result = await getYoutubeInfo(query);
+			const info = await getYoutubeInfo(query);
+			const result: QueueTrack = {
+				info,
+				requestedBy: message.member.user,
+			};
 			queue.push(result);
 		} else {
 			// TODO: Magic number
@@ -95,9 +99,12 @@ const play: Command = {
 				return message.reply('No results found!');
 
 			// TODO: Magic Number, do we always want the first result?
-			const result: YoutubeInfo = await getYoutubeInfo(results[0].url);
+			const info: YoutubeInfo = await getYoutubeInfo(results[0].url);
 
-			queue.push(result);
+			queue.push({
+				info,
+				requestedBy: message.member.user,
+			});
 		}
 
 		// TODO: move ytdl options to a config file
@@ -106,8 +113,8 @@ const play: Command = {
 		};
 
 		if (!audioPlayer.checkPlayable()) {
-			const track: YoutubeInfo = queue[0];
-			const audioStream = ytdl(track.url, ytdlOptions);
+			const track = queue[0];
+			const audioStream = ytdl(track.info.url, ytdlOptions);
 			const audioResource = createAudioResource(audioStream, {
 				inputType: StreamType.Arbitrary,
 			});

@@ -134,7 +134,7 @@ export const pagination = async function(
 	pages: EmbedBuilder[],
 	pageIndex: number = 0,
 	timeout: number = 5 * 60 * 1e3,
-) {
+): Promise<void> {
 	if (pages.length === 0) {
 		console.error('Empty pages');
 		return;
@@ -263,7 +263,9 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 		});
 
 		audioPlayer.on(AudioPlayerStatus.Idle, () => {
-			const queue: YoutubeInfo[] = client.queue.get(guildId);
+			const queue = client.queue.get(guildId);
+			if (queue === undefined) return;
+
 			queue.shift();
 			if (queue.length === 0) {
 				leave.execute(message);
@@ -273,8 +275,8 @@ export const initializeClient = function(message: Message | ChatInputCommandInte
 					filter: 'audioonly',
 				};
 
-				const track: YoutubeInfo = queue[0];
-				const audioStream = ytdl(track.url, ytdlOptions);
+				const track = queue[0];
+				const audioStream = ytdl(track.info.url, ytdlOptions);
 				const audioResource = createAudioResource(audioStream, {
 					inputType: StreamType.Arbitrary,
 				});

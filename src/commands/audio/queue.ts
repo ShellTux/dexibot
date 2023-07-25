@@ -4,7 +4,7 @@ import {
 	Message,
 	SlashCommandBuilder,
 } from 'discord.js';
-import { Command, YoutubeInfo } from '../../definitions';
+import { Command, QueueTrack } from '../../definitions';
 import { pagination } from '../../functions';
 
 const queue: Command = {
@@ -14,12 +14,12 @@ const queue: Command = {
 	execute: async (
 		message: Message | ChatInputCommandInteraction,
 	) => {
-		const queue: YoutubeInfo[] = message.client.queue.get(message.guildId);
+		const queue: QueueTrack[] = message.client.queue.get(message.guildId);
 
 		if (queue.length === 0)
 			return message.reply('Queue is empty');
 
-		const currentTrack: YoutubeInfo = queue[0];
+		const currentTrack = queue[0];
 
 		const pages: EmbedBuilder[] = [];
 
@@ -34,7 +34,7 @@ const queue: Command = {
 				.setThumbnail(message.guild.iconURL())
 				.addFields({
 					name: 'Current Track',
-					value: `\`1)\` ${currentTrack.title}`,
+					value: `\`1)\` ${currentTrack.info.title}`,
 					inline: true,
 				}, {
 					name: 'Requested by',
@@ -42,14 +42,14 @@ const queue: Command = {
 					inline: true,
 				}, {
 					name: 'Duration',
-					value: `${currentTrack.duration}`,
+					value: `${currentTrack.info.duration}`,
 					inline: true,
 				})
 				.addFields({
 					name: 'Queue',
 					value: batch
 						.map((track, i) => `${i + 1}) `
-					+ `${track.title}`)
+					+ `${track.info.title}`)
 						.join('\n'),
 				});
 

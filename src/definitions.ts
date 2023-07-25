@@ -1,4 +1,5 @@
 import {
+	APIUser,
 	ChatInputCommandInteraction,
 	Message,
 	SlashCommandBuilder,
@@ -52,4 +53,9 @@ export type YoutubeInfo = YoutubeBasicInfo & {
 	isLive: boolean;
 	likes: number;
 	dislikes: number;
+};
+
+export type QueueTrack = {
+	info: YoutubeInfo;
+	requestedBy: User | APIUser;
 };

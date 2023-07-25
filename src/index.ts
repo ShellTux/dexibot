@@ -4,14 +4,14 @@ import path from 'node:path';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { AudioPlayer, generateDependencyReport } from '@discordjs/voice';
 console.log(generateDependencyReport());
-import { Command, YoutubeInfo } from './definitions.js';
+import { Command, QueueTrack } from './definitions.js';
 
 declare module 'discord.js' {
 	interface Client {
 		commands: Collection<string, Command>;
 		cooldowns: Collection<string, Collection<string, number>>;
 		audioPlayer: Collection<string, AudioPlayer>;
-		queue: Collection<string, YoutubeInfo[]>;
+		queue: Collection<string, QueueTrack[]>;
 	}
 }
 
@@ -28,7 +28,7 @@ const client: Client = new Client({
 client.commands    = new Collection<string, Command>();
 client.cooldowns   = new Collection<string, Collection<string, number>>;
 client.audioPlayer = new Collection<string, AudioPlayer>();
-client.queue       = new Collection<string, YoutubeInfo[]>();
+client.queue       = new Collection<string, QueueTrack[]>();
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
