@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Events, Message } from 'discord.js';
-import { initializeClient } from '../functions';
+import { Debug, debugMessage, initializeClient } from '../functions';
 
 const PREFIX: string = process.env.PREFIX;
 
@@ -20,9 +20,14 @@ module.exports = {
 			return message.reply(`Unknown Command\nTry ${PREFIX}help`);
 		}
 
-		console.log(
-			`Command: ${command}, Author: ${message.author.username}, ` +
-				`Argc: ${args.length}, Argv: ${args}`,
+		debugMessage(
+			Debug.INFO,
+			[
+				'Command: ' + command,
+				'Author: ' + message.author.username,
+				'Argc: ' + args.length,
+				'Argv: ' + args,
+			].join(', ')
 		);
 
 		initializeClient(message);

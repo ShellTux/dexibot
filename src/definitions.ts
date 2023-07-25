@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import {
 	APIUser,
 	ChatInputCommandInteraction,
@@ -59,3 +60,6 @@ export type QueueTrack = {
 	info: YoutubeInfo;
 	requestedBy: User | APIUser;
 };
+
+export const error   = chalk.bold.red;
+export const warning = chalk.yellow;

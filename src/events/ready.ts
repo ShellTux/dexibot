@@ -1,9 +1,14 @@
 import { Client, Events } from 'discord.js';
+import { Debug, debugMessage } from '../functions';
+import chalk from 'chalk';
 
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	execute: (client: Client) => {
-		console.log(`Ready! Logged in as ${client.user.tag}`);
+		debugMessage(
+			Debug.OK,
+			'Ready! Logged in as ' + chalk.underline(client.user.tag)
+		);
 	},
 };

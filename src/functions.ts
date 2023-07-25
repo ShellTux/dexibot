@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import {
 	AudioPlayerStatus,
 	NoSubscriberBehavior,
@@ -342,4 +343,40 @@ export const uwuify = function(sentence: string): string {
 	sentence += ` ${uwuRules.faces[Math.floor(Math.random() * uwuRules.faces.length)]}`;
 
 	return sentence;
+};
+
+/**
+	* Debug levels
+*/
+export enum Debug { INFO = 'info', ERROR = 'error', WARNING = 'warning', OK = 'ok' }
+
+/**
+	* Prints a debug message with the specified type and message.
+	*
+	* @param {Debug} type - The debug type.
+	* @param {string} message - The debug message
+*/
+export const debugMessage = function(type: Debug, message: string) {
+	let color;
+
+	switch (type) {
+	case Debug.INFO:
+		color = chalk.blue;
+		break;
+	case Debug.ERROR:
+		color = chalk.bold.red;
+		break;
+	case Debug.WARNING:
+		color = chalk.yellow;
+		break;
+	case Debug.OK:
+		color = chalk.greenBright;
+		break;
+	}
+
+	let header = type.toUpperCase();
+	header = color(header);
+	header = `[${header}]: `;
+
+	console.log(header + message);
 };

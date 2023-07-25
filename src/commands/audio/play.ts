@@ -19,8 +19,6 @@ import join from './join';
 import * as queueCommand from './queue';
 import nowPlaying from './now-playing';
 
-console.log(`ytdl-core version: ${ytdl.version}`);
-
 const ytdlSearch = function(query: string, amount: number): YoutubeBasicInfo[] {
 	// TODO: Pick biggest thumbnail
 	// const biggestThumbnail = (

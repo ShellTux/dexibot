@@ -3,8 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { AudioPlayer, generateDependencyReport } from '@discordjs/voice';
-console.log(generateDependencyReport());
-import { Command, QueueTrack } from './definitions.js';
+import { Command, QueueTrack, warning } from './definitions.js';
+import { version as ytdlVersion } from 'ytdl-core';
+import chalk from 'chalk';
+import { Debug, debugMessage } from './functions.js';
 
 declare module 'discord.js' {
 	interface Client {
@@ -74,4 +76,6 @@ for (const file of eventFiles) {
 if (!process.env.DISCORD_TOKEN)
 	throw new Error('DISCORD_TOKEN environment variable missing.');
 
+console.log(generateDependencyReport());
+debugMessage(Debug.INFO, chalk.bold('ytdl-core version: ') + chalk.underline(ytdlVersion));
 client.login(process.env.DISCORD_TOKEN);
